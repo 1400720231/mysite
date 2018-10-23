@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}blog titles{% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+	<h1>我的博客</h1>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-8">
+		<ul>
+			{% for blog in blogs %}
+			<li><a href="{{ blog.id }}">{{ blog.title }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="col-xs-6 col-md-4">
+		<h2>广告</h2>
+		<p>this is a girl </p>
+		<img width="200px" src="https://b-ssl.duitang.com/uploads/item/201511/11/20151111132340_ZiUtz.jpeg">
+	</div>
+</div>
+{% endblock %}
