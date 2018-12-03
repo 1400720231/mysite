@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm
+from .forms import LoginForm, RsgistrationForm
 # Create your views here.
 
 # 登录视图
@@ -8,7 +8,7 @@ def user_login(request):
     if request.method == 'GET':
         login_form = LoginForm()
         context = {"form": login_form}
-        return render(request, "login.html",context=context)
+        return render(request, "account/login.html",context=context)
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -21,10 +21,12 @@ def user_login(request):
                     # 如果这里用render的话 意思就是把此时view中的数据render到index.html页面，
                     # 会导致看不到其他view在index.html render的数据，所以我们直接重定向过去就可以了，不用render传信息
                     return HttpResponseRedirect(reverse('blog:blog_title'))
+                    # return HttpResponse("账户未激活，请激活或再重新登录")
                 else:
-                    return render(request, "login.html")
+                    return HttpResponse("账户未激活，请激活或再重新登录")
         else:
-            return render(request, "login.html", {'form': form})
+            return HttpResponse("账户密码错误，重新登录")
+
 
 # 登出视图
 def user_logout(request):
@@ -33,5 +35,16 @@ def user_logout(request):
     return HttpResponseRedirect(reverse('blog:blog_title'))
 
 
-def user_register(request):
-    pass
+def register(request):
+    if request.method == "POST":
+        user_form = RsgistrationForm(request.POST)
+        if user_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data["password"])
+            new_user.save()
+            return HttpResponse("successful")
+        else:
+            return HttpResponse("sorry, 填入的信息有误，请重新输入再次注册")
+    else:
+        user_form = RsgistrationForm()
+        return render(request, "account/register.html", {"form":user_form})
