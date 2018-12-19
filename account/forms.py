@@ -15,7 +15,7 @@ class RegisterForm(forms.Form):
 	password = forms.CharField(required=True, min_length=5)
 
 
-
+# 注册表单二
 class RsgistrationForm(forms.ModelForm):
 	password = forms.CharField(label="Password",widget=forms.PasswordInput)
 	password2 = forms.CharField(label="Password", widget=forms.PasswordInput)
@@ -35,9 +35,19 @@ class RsgistrationForm(forms.ModelForm):
 			raise forms.ValidationError("passwords do not match !")
 		return cd["password2"]
 
+#　注册表单　与二一起在一个视图函数中用
 class UserProfileForm(forms.ModelForm):
 	class Meta:
 		model = UserProfile
 		fields = ("phone","birth")
 
 
+# 密码修改表单
+class ModifyPwdForm(forms.Form):
+	password1 = forms.CharField(max_length=100)
+	password2 = forms.CharField(max_length=100)
+
+
+# 邮箱验证码，输入的form表单
+class EmailForm(forms.Form):
+	email = forms.EmailField()

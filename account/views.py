@@ -1,6 +1,9 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm, RsgistrationForm,UserProfileForm
+from .forms import LoginForm, RsgistrationForm,UserProfileForm,ModifyPwdForm
+from django.contrib.auth.hashers import make_password
+# 发送邮件重置密码
+from utils.send_email import send_email
 # Create your views here.
 
 # 登录视图
@@ -72,3 +75,40 @@ def register(request):
         user_form = RsgistrationForm()
         userprofile_form = UserProfileForm()
         return render(request, "account/register.html",{"form":user_form,"profile":userprofile_form})
+
+
+# 修改密码
+def modify_password(request):
+    modify_form = ModifyPwdForm(request.POST)
+    if request.method == "POST":
+        user = request.user
+        
+        if modify_form.is_valid():
+            pwd1 = request.POST.get('password1')
+            pwd2 = request.POST.get('password2')
+            if pwd1 != pwd2:
+                return render(request, 'account/password_reset.html', {'mes': '密码不一致','modify_form': modify_form})
+            else:
+                # 注意这里的make_password函数，吧明文编码成hash的密文
+                user.password = make_password(pwd2)
+                user.save()
+                return HttpResponseRedirect(reverse('account:user_login'))
+    else:
+        return render(request, 'account/password_reset.html', {'mes': '','modify_form': modify_form})
+
+# 重置密码
+from .forms import EmailForm
+def reset_password(request):
+    if request.method == "GET":
+        form = EmailForm()
+        context = {"form":form}
+        return render(request, 'account/input_email.html',context=context)
+        
+    else:
+        email = request.POST.get(email, '')
+        if email:
+
+            send_email()
+            return HttpResponse("验证码已经发送，查收")
+        else:
+            return HttpResponse("请输入正确的邮箱")

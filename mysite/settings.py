@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 把手动生成的包加入django的搜索路径
+sys.path.insert(0, os.path.join(BASE_DIR,'utils'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -124,3 +127,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+
+
+# 邮箱配置
+EMAIL_HOST = 'smtp.sina.com'  # 服务器
+EMAIL_PORT = 25   # 邮箱端口端口
+EMAIL_HOST_USER = 'youremail'  # 用户名字
+EMAIL_HOST_PASSWORD = "your email password"  # 邮箱账号密码
+EMAIL_USE_TLS = True # 与SMTP服务器通信时，是否启动TLS链接(安全链接)。默认是false
+EMAIL_FROM = 'youemail' # 发送者，一般和EMAIL_HOST_USER保持一直，不然会报错
