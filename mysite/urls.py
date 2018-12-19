@@ -21,3 +21,8 @@ urlpatterns = [
     url(r'^blog/', include('blog.urls',namespace='blog', app_name='blog')),
     url(r'^account/', include('account.urls',namespace='account', app_name='account')),
 ]
+
+
+handler404 = 'account.views.page_not_found'
+# 全局500 页面函数
+handler500 = 'account.views.page_error'

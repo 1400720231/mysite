@@ -33,6 +33,8 @@ class RsgistrationForm(forms.ModelForm):
 		cd = self.cleaned_data
 		if cd["password"] != cd["password2"]:
 			raise forms.ValidationError("passwords do not match !")
+		if not cd["email"]:
+			raise forms.ValidationError("邮箱不能为空!")
 		return cd["password2"]
 
 #　注册表单　与二一起在一个视图函数中用
@@ -44,8 +46,8 @@ class UserProfileForm(forms.ModelForm):
 
 # 密码修改表单
 class ModifyPwdForm(forms.Form):
-	password1 = forms.CharField(max_length=100)
-	password2 = forms.CharField(max_length=100)
+	password1 = forms.CharField(max_length=100,widget=forms.PasswordInput)
+	password2 = forms.CharField(max_length=100,widget=forms.PasswordInput)
 
 
 # 邮箱验证码，输入的form表单

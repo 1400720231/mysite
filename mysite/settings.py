@@ -132,7 +132,7 @@ STATICFILES_DIRS = [
 # 邮箱配置
 EMAIL_HOST = 'smtp.sina.com'  # 服务器
 EMAIL_PORT = 25   # 邮箱端口端口
-EMAIL_HOST_USER = 'youremail'  # 用户名字
-EMAIL_HOST_PASSWORD = "your email password"  # 邮箱账号密码
+EMAIL_HOST_USER = '1400720231_mina@sina.com'  # 用户名字
+EMAIL_HOST_PASSWORD = "250onion????"  # 邮箱账号密码
 EMAIL_USE_TLS = True # 与SMTP服务器通信时，是否启动TLS链接(安全链接)。默认是false
-EMAIL_FROM = 'youemail' # 发送者，一般和EMAIL_HOST_USER保持一直，不然会报错
+EMAIL_FROM = '1400720231_mina@sina.com' # 发送者，一般和EMAIL_HOST_USER保持一直，不然会报错

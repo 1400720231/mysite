@@ -23,10 +23,9 @@ def send_email(email):
     code = random_str(16)
     email_record.code = code
     email_record.email = email
-    email_record.send_type = send_type
     email_record.save()  
     email_titile = '小熊的网站密码重置链接'
-    email_body = '请点击下面的链接激活你的账号：http:127.0.0.1:8000/reset/{0}'.format(code)
+    email_body = '请点击下面的链接激活你的账号：http:127.0.0.1:8000/account/reset/{0}'.format(code)
     send_status = send_mail(subject=email_titile, message=email_body, from_email=EMAIL_FROM, recipient_list=[email])
     if send_status:
         pass
