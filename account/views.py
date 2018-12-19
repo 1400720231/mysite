@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm, RsgistrationForm
+from .forms import LoginForm, RsgistrationForm,UserProfileForm
 # Create your views here.
 
 # 登录视图
@@ -34,7 +34,8 @@ def user_logout(request):
     # 登出后重定向到index页面
     return HttpResponseRedirect(reverse('blog:blog_title'))
 
-
+"""
+注册视图函数一
 def register(request):
     if request.method == "POST":
         user_form = RsgistrationForm(request.POST)
@@ -48,3 +49,26 @@ def register(request):
     else:
         user_form = RsgistrationForm()
         return render(request, "account/register.html", {"form":user_form})
+
+"""
+"""
+注册视图函数二 增加了userprofile model后的重写注册视图函数一
+"""
+def register(request):
+    if request.method == "POST":
+        user_form = RsgistrationForm(request.POST)
+        userprofile_form = UserProfileForm(request.POST)
+        if user_form.is_valid() * userprofile_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data["password"])
+            new_user.save()
+            new_profile = userprofile_form.save(commit=False)
+            new_profile.user = new_user
+            new_profile.save()
+            return HttpResponse("successful")
+        else:
+            return HttpResponse("sorry , you can not register !")
+    else:
+        user_form = RsgistrationForm()
+        userprofile_form = UserProfileForm()
+        return render(request, "account/register.html",{"form":user_form,"profile":userprofile_form})
