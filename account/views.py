@@ -231,6 +231,12 @@ def myself_edit(request):
 UserInfo.objects.get(user=request.user)
 # 也可以用数据库中保存的样子user_id查询也没错
 UserInfo.objects.get(user_id=request.user.id)
+
+img = request.POST['img']:
+此时还没有指定media目录，所以上传文件的时候没有用request.FILE而用的request.POST['img']
+因为在前段的ajax中吧上传的图片信息赋值给了img:img，也就是说这里吧图片看成了一串字符串，在数据库中也能够
+看到的确是保存的一串字符串，再者在前段展示的时候userprofile.photo|striptags正是为了去除数据库中标签，让其展示成
+图片的样子
 """
 @login_required(login_url="/account/login/")
 def my_image(request):
