@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, UserInfo
 
 
 # 登录表单
@@ -53,3 +53,17 @@ class ModifyPwdForm(forms.Form):
 # 邮箱验证码，输入的form表单
 class EmailForm(forms.Form):
 	email = forms.EmailField()
+
+
+
+
+class UserInfoForm(forms.ModelForm):
+	class Meta:
+		model = UserInfo
+		fields = ("school","company","profession","address","aboutme","photo")
+
+class UserForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ("email",)
+	

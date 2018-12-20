@@ -1,9 +1,10 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import LoginForm, RsgistrationForm,UserProfileForm,ModifyPwdForm
-from .forms import EmailForm
-from .models import EmailVerifyRecord
+from .forms import EmailForm,UserForm,UserInfoForm
+from .models import EmailVerifyRecord, UserProfile,UserInfo
 from django.contrib.auth.hashers import make_password
 # 发送邮件重置密码
 from utils.send_email import send_email
@@ -60,19 +61,23 @@ def register(request):
 
 """
 """
-注册视图函数二 增加了userprofile model后的重写注册视图函数一
+注册视图函数二 增加了userprofile userinfo model后的重写注册视图函数一
 """
 def register(request):
     if request.method == "POST":
         user_form = RsgistrationForm(request.POST)
         userprofile_form = UserProfileForm(request.POST)
         if user_form.is_valid() * userprofile_form.is_valid():
+            # user保存数据库
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data["password"])
             new_user.save()
+            # userprofile 保存数据库
             new_profile = userprofile_form.save(commit=False)
             new_profile.user = new_user
             new_profile.save()
+            # userinfo 保存数据库
+            UserInfo.objects.create(user=new_user)
             return HttpResponse("successful")
         else:
             return HttpResponse("sorry , you can not register !")
@@ -172,3 +177,68 @@ def page_error(request):
     response = render_to_response('500.html')
     response.status_code = 500
     return response
+
+
+# 个人信息展示
+@login_required(login_url='/account/login/')
+def myself(request):
+    user = User.objects.get(username=request.user.username)
+    userprofile = UserProfile.objects.get(user=user)
+    userinfo = UserInfo.objects.get(user=user)
+    context = {"user":user,"userinfo":userinfo,"userprofile":userprofile}
+    return render(request,"account/myself.html",context=context)
+
+
+# 个人信息编辑
+@login_required(login_url='/account/login/')
+def myself_edit(request):
+    user = User.objects.get(username=request.user.username) 
+    userprofile = UserProfile.objects.get(user=request.user)
+    userinfo = UserInfo.objects.get(user=request.user)
+
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        userprofile_form = UserProfileForm(request.POST)
+        userinfo_form = UserInfoForm(request.POST)
+        if user_form.is_valid() * userprofile_form.is_valid() * userinfo_form.is_valid():
+            user_cd = user_form.cleaned_data
+            userprofile_cd = userprofile_form.cleaned_data
+            userinfo_cd = userinfo_form.cleaned_data
+            user.email = user_cd['email']
+            userprofile.birth = userprofile_cd['birth']
+            userprofile.phone = userprofile_cd['phone']
+            userinfo.school = userinfo_cd['school']
+            userinfo.company = userinfo_cd['company']
+            userinfo.profession = userinfo_cd['profession']
+            userinfo.address = userinfo_cd['address']
+            userinfo.aboutme = userinfo_cd['aboutme']
+            user.save()
+            userprofile.save()
+            userinfo.save()
+        return HttpResponseRedirect(reverse("account:my-information"))   
+    else:
+        user_form = UserForm(instance=request.user)
+        userprofile_form = UserProfileForm(initial={"birth":userprofile.birth, "phone":userprofile.phone})
+        userinfo_form = UserInfoForm(initial={"school":userinfo.school, "company":userinfo.company, "profession":userinfo.profession, "address":userinfo.address, "aboutme":userinfo.aboutme})
+        return render(request, "account/myself_edit.html", {"user_form":user_form, "userprofile_form":userprofile_form, "userinfo_form":userinfo_form})
+
+
+# 头像上传页面
+"""
+注意看 UserInfo.objects.get(user=request.user.id)这一行代码，
+因为UserInfo中有user字段外键User字段，所以其实这里也可以用:
+# 直接用对象实例查询肯定没错
+UserInfo.objects.get(user=request.user)
+# 也可以用数据库中保存的样子user_id查询也没错
+UserInfo.objects.get(user_id=request.user.id)
+"""
+@login_required(login_url="/account/login/")
+def my_image(request):
+    if request.method == "POST":
+        img = request.POST['img']
+        userinfo = UserInfo.objects.get(user=request.user.id)
+        userinfo.photo = img
+        userinfo.save()
+        return HttpResponse("1")
+    else:
+        return render(request,"account/imagecrop.html")
