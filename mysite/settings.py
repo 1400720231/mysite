@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'pure_pagination', # 分页
     'blog',
     'account',
     'article',
@@ -137,3 +138,12 @@ EMAIL_HOST_USER = '你的邮箱名'  # 用户名字
 EMAIL_HOST_PASSWORD = "你的账号密码"  # 邮箱账号密码
 EMAIL_USE_TLS = True # 与SMTP服务器通信时，是否启动TLS链接(安全链接)。默认是false
 EMAIL_FROM = '你的邮箱名' # 发送者，一般和EMAIL_HOST_USER保持一直，不然会报错
+
+
+# 分页相关配置
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 10,
+    'MARGIN_PAGES_DISPLAYED': 2,
+
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}

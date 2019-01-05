@@ -1,0 +1,15 @@
+{% extends "article/base.html" %}
+
+{% block title %} 文章详情 {% endblock %}
+
+
+{% block content %}
+<div>
+	<h1>{{ article.title }}</h1>
+	<p>{{ article.author }}</p>
+
+<div>
+	{{ article.body| linebreaks }}
+</div>
+</div>
+{% endblock %}

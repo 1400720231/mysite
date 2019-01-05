@@ -1,0 +1,88 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+
+{% block title %}articles list{% endblock %}
+
+{% block content %}
+<div>
+    <table class="table table-hover">
+    	<tr>
+    	    <td>序号</td>
+    	    <td>标题</td>
+            <td>栏目</td>
+    	    <td>操作</td>
+    	</tr>
+    	{% for article in articles.object_list %}
+    	<tr id={{ article.id }}>
+    	    <td>{{ forloop.counter }}</td>
+    	    <td><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></td>
+            <td>{{ article.column }}</td>
+    	    <td>
+                <a name="edit" href="{% url 'article:redit_article' article.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a nane="delete" href="javascript:" onclick="del_article(this, {{ article.id })"><span class="glyphicon glyphicon-trash" style="margin-left:20px;"></span></a>
+            </td>
+    	</tr>
+    	{% endfor %}
+    </table>
+   
+</div>
+<!--分页需要导入的-->
+{% load i18n %}
+<div class="pagination">
+    {% if articles.has_previous %}
+        <a href="?{{ articles.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+    {% else %}
+        <span class="disabled prev">&lsaquo;&lsaquo; {% trans "上一页" %}</span>
+    {% endif %}
+    {% for page in articles.pages %}
+        {% if page %}
+            {% ifequal page articles.number %}
+                <span class="current page">{{ page }}</span>
+            {% else %}
+                <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    {% if articles.has_next %}
+        <a href="?{{ articles.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>
+    {% else %}
+        <span class="disabled next">{% trans "下一页" %} &rsaquo;&rsaquo;</span>
+    {% endif %}
+</div>
+
+<script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+<script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+<script type="text/javascript">
+function del_article(the, article_id){
+    var article_name = $(the).parents("tr").children("td").eq(1).text();
+        layer.open({
+	    type: 1,
+	    skin: "layui-layer-rim",
+	    area: ["400px", "200px"],
+	    title: "删除文章",
+	    content: '<div class="text-center" style="margin-top:20px"><p>是否确定删除《'+article_name+'》</p></div>',
+	    btn:['确定', '取消'],
+	    yes: function(){
+		$.ajax({
+		    url: '{% url "article:del_article" %}',
+		    type:"POST",
+		    data: {"article_id":article_id},
+		    success: function(e){
+			if(e=="1"){
+			    parent.location.reload();
+			    layer.msg("has been deleted.");
+			}else{
+			    layer.msg("删除失败");
+			}
+						
+		    },
+		})	
+	    },
+	});
+    }
+</script>
+
+{% endblock %}
+

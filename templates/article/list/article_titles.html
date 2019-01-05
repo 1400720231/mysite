@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load article_tags %}
+{% block title %} articles {% endblock %}
+
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>阅读，丰富头脑，善化行为</h1>
+    <p>这里已经有{% total_articles %}篇文章供你阅读</p>
+</div>
+<div class="container">
+    {% for article in articles %}
+    <div class="list-group">
+        <a href="{{article.get_url_path}}" class="list-group-item active">
+            <h4 class="list-group-item-heading">{{article.title}}</h4>
+        </a>
+        <p class="list-group-item-text">作者：<a href="{% url 'article:author_articles' article.author.username %}">{{article.author.username}}</a></p>
+        <p class="list-group-item-text">概要：{{article.body|slice:'70'| linebreaks}}</p>
+    </div>
+    {% endfor %}
+
+</div>
+<!--分页需要导入的-->
+{% load i18n %}
+<div class="pagination">
+    {% if articles.has_previous %}
+        <a href="?{{ articles.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+    {% else %}
+        <span class="disabled prev">&lsaquo;&lsaquo; {% trans "上一页" %}</span>
+    {% endif %}
+    {% for page in articles.pages %}
+        {% if page %}
+            {% ifequal page articles.number %}
+                <span class="current page">{{ page }}</span>
+            {% else %}
+                <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    {% if articles.has_next %}
+        <a href="?{{ articles.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>
+    {% else %}
+        <span class="disabled next">{% trans "下一页" %} &rsaquo;&rsaquo;</span>
+    {% endif %}
+</div>
+{% endblock %}
+
