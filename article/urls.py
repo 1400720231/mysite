@@ -1,5 +1,5 @@
 from django.conf.urls import url, include
-from . import views
+from . import views, list_views
 
 
 urlpatterns = [
@@ -19,7 +19,15 @@ urlpatterns = [
     url(r'^redit-article/(?P<article_id>\d+)/$', views.redit_article,name="redit_article"),
     # 删除文章
     url(r'^del-article/$', views.del_article,name="del_article"),
-    # 所有标题
-    url(r'^article-titles/$', views.article_titles,name="article_titles")
-    
+    # 所有自己的标题
+    url(r'^article-titles/$', views.article_titles,name="article_titles"),
+
+    # 所有数据库的标题
+    url(r'^list-article-titles/$', list_views.article_titles, name="article_titles"),
+    # 所有文章
+    url(r'^list-article-detail/(?P<id>\d+)(?P<slug>[-\w]+)/$',list_views.article_detail, name="list_article_detail"),
+    # 个人所有文章标题
+    url(r'^list-article-titles/(?P<username>[-\w]+)/$',list_views.article_titles, name="author_articles"),
+    #　点赞视图函数
+    url(r'^like-article/$', list_views.like_article, name="like_article"),
 ]

@@ -147,3 +147,9 @@ PAGINATION_SETTINGS = {
 
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
+
+
+# redis配置
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_DB = 0

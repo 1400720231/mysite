@@ -29,7 +29,8 @@ class ArticlePost(models.Model):
 	body = models.TextField()
 	created = models.DateTimeField(default=timezone.now())
 	updated = models.DateTimeField(auto_now=True)
-
+	# 点赞字段　多对多
+	users_like = models.ManyToManyField(User, related_name="article_likes", blank=True)
 	class Meta:
 		ordering = ("-updated",)
 		# 联合索引，表示当查询条件中同时有id slug的时候速度快很多
@@ -45,4 +46,8 @@ class ArticlePost(models.Model):
 	# 自定义一个属性，获取类似这样的路径：article/article_detail/1/python-study
 	def get_absolute_url(self):
 		return reverse("article:article_detail", args=[self.id, self.slug])
+
+	# 自定义一个属性和上面是一样的意义，这个是为无权限的所有用户可以访问的编写的
+	def get_url_path(self):
+		return reverse("article:list_article_detail", args=[self.id, self.slug])
 
