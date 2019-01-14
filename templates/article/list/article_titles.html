@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load article_tags %}
 {% load staticfiles %}
 {% block title %} articles {% endblock %}
 
 {% block content %}
 <div class="row text-center vertical-middle-sm">
     <h1>阅读，丰富头脑，善化行为</h1>
-    
+    <p>这里一共有{% total_articles %}篇文章供你阅读</p>>
 </div>
 <div class="container">
     <div class="col-md-8">

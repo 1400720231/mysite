@@ -8,7 +8,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 
 from .models import ArticleColumn, ArticlePost
-
+from .forms import CommentForm
 import redis
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
@@ -52,19 +52,29 @@ r.zrange("article_ranking",0,-1, desc=True)[:10]:
 的id 
 """
 def article_detail(request,id,slug):
-    if request.method == "GET":
-        article = get_object_or_404(ArticlePost,id=id, slug=slug)
-        total_views = r.incr("article:{}:views".format(article.id))
-        r.zincrby("article_ranking",article.id, 1)
-        article_ranking = r.zrange("article_ranking",0,-1, desc=True)[:10]
-        article_ranking_ids = [int(id) for id in article_ranking]
-        # 注意id__in这种用法，多使用多复习
-        most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))
-        # 按照id索引大小排序。。。也就是在数据库中创建的时间。。。。这尼玛
-        most_viewed.sort(key=lambda x:article_ranking_ids.index(x.id))
-        return render(request, "article/list/article_detail.html",
-                        {"article":article,"total_views":total_views,
-                        "most_viewed":most_viewed})
+  
+    article = get_object_or_404(ArticlePost,id=id, slug=slug)
+    total_views = r.incr("article:{}:views".format(article.id))
+    r.zincrby("article_ranking",article.id, 1)
+    article_ranking = r.zrange("article_ranking",0,-1, desc=True)[:10]
+    article_ranking_ids = [int(id) for id in article_ranking]
+    # 注意id__in这种用法，多使用多复习
+    most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))
+    # 按照id索引大小排序。。。也就是在数据库中创建的时间。。。。这尼玛
+    most_viewed.sort(key=lambda x:article_ranking_ids.index(x.id))
+
+    # 评论功能
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.article = article
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    return render(request, "article/list/article_detail.html",
+                    {"article":article,"total_views":total_views,
+                    "most_viewed":most_viewed,"comment_form":comment_form})
 
 
 
