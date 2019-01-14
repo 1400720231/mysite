@@ -9,7 +9,7 @@
     <p>这里一共有{% total_articles %}篇文章供你阅读</p>
 </div>
 <div class="container">
-    <div class="col-md-12">
+    <div class="col-md-8">
         {% for article in articles.object_list %}
         <div class="list-group">
             <a href="{{article.get_url_path}}" class="list-group-item active">
@@ -23,7 +23,25 @@
 
 
 
-
+<div class="col-md-4">
+    <div>
+        {% if userinfo %}
+            <img src="{{ userinfo.photo | striptags }}" class="img-circle" id="my_photo" name="user_face">
+        {% else %}
+            <img src="{% static 'images/1.jpg' %}" name='user_face' class="img-circle" id="my_photo">
+        {% endif %}
+    
+        <div>
+            	<p>作者：{{ user.username }}</p>
+            	<p>一共发表{% author_total_articles user %}篇文章</p></p>
+            {% if userinfo %}
+                <p>公司：{{ userinfo.company }}</p>>
+            {% else %}
+                <p>这个作者太懒了，啥都不给人家留下～～～ </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 </div>
 

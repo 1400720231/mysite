@@ -16,6 +16,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 r = redis.StrictRedis(host=settings.REDIS_HOST,port=settings.REDIS_PORT,db=settings.REDIS_DB)
 # 所有数据库的title函数
 def article_titles(request, username=None):
+
     if username:
         user = User.objects.get(username=username)
         article_title = ArticlePost.objects.filter(author=user)
@@ -35,7 +36,7 @@ def article_titles(request, username=None):
 
     people = p.page(page)
     if username:
-        return render(request, "article/list/article_titles.html", {"articles":people,"user":user,"userinfo":userinfo})
+        return render(request, "article/list/author_articles.html", {"articles":people,"user":user,"userinfo":userinfo})
 
 
     return render(request, "article/list/article_titles.html", {"articles":people})
