@@ -125,9 +125,9 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+# STATICFILES_DIRS = [
+    # os.path.join(BASE_DIR, 'static')
+# ]
 
 
 
@@ -153,3 +153,7 @@ PAGINATION_SETTINGS = {
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
+
+# nginx静态文件目录
+STATIC_ROOT = os.path.join(BASE_DIR,"static/")
+#还得吧STATICFILES_DIRS注释掉，因为这两个是不能同时存在的
